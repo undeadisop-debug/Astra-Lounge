@@ -252,6 +252,12 @@
   .shot:hover img { transform: scale(1.04); transition-delay: 0s; transition-duration: .6s; }
   .shot figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 18px 16px; font-size: 14px; font-weight: 600; color: #fff; background: linear-gradient(180deg, transparent, rgba(7,8,15,.9)); transform: translateY(8px); opacity: 0; transition: transform .4s var(--ease), opacity .4s; }
   .shot.in figcaption { transform: none; opacity: 1; }
+  .shot.missing { cursor: default; border: 1px dashed rgba(140,123,255,.4); background: rgba(88,101,242,.06); }
+  .shot.missing:hover { box-shadow: none; }
+  .shot-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 24px; text-align: center; }
+  .shot-empty b { font-size: 15px; color: #fff; margin-top: 6px; }
+  .shot-empty span { font-size: 13px; color: var(--dim); line-height: 1.5; max-width: 300px; }
+  .shot-empty code { color: #B9A6FF; font-size: 12px; }
   .lightbox { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(7,8,15,.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); opacity: 0; visibility: hidden; transition: opacity .35s, visibility .35s; cursor: zoom-out; }
   .lightbox.open { opacity: 1; visibility: visible; }
   .lightbox img { max-width: 100%; max-height: 85vh; border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,.6); transform: scale(.92); transition: transform .4s var(--ease); }
@@ -357,9 +363,16 @@ const CONFIG = {
   serverName: "Astra Lounge",
   inviteLink: "https://discord.gg/tEQhbRVXx8",
 
-  // Your server icon and banner (image links). Leave either as "" and the
-  // page will try to pull it straight from your Discord invite instead.
+  // ---------------- IMAGES ----------------
+  // Every image field on this page takes either:
+  //   - a full link:      "https://undeadisop-debug.github.io/Astra-Lounge/icon.png"
+  //   - or a file name:   "icon.png"  (a file uploaded next to index.html in your repo)
+  //   - or a sub-folder:  "screenshots/1.png"
+  //
+  // SERVER ICON (the square logo in the nav, preview card and intro screen)
   logoImage: "https://undeadisop-debug.github.io/Astra-Lounge/EA546BAA-6426-4900-BA87-9FE1C10ACCF9.png",
+  // SERVER BANNER (wide image faded in behind the hero). Leave "" to pull it
+  // from Discord automatically (if your server has one set).
   bannerImage: "",
 
   // LIVE STATS: true = pull the real member / online counts (and icon +
@@ -412,9 +425,11 @@ const CONFIG = {
   previewChannels: ["welcome", "general-chat", "events"],
   previewVoiceChannel: "Voice Lounge 1",
 
-  // SCREENSHOT GALLERY. Upload your screenshots to the same GitHub folder as
-  // this file (e.g. a "screenshots" folder) and list them here. Any image
-  // that fails to load is skipped. Set to [] to hide the whole section.
+  // SCREENSHOT GALLERY
+  // Upload your screenshots to your GitHub repo (e.g. in a "screenshots"
+  // folder) and put their links or file names here. Until an image exists
+  // its tile shows an "add screenshot" placeholder so you can see where it
+  // will go. Set gallery to [] to hide the whole section.
   galleryTitle: "A peek inside",
   gallery: [
     { image: "screenshots/1.png", caption: "Friday game night" },
@@ -789,11 +804,15 @@ setBanner(c.bannerImage);
     if (!n) { section.remove(); lb.remove(); }
   };
   grid.querySelectorAll('img').forEach(img => {
-    img.addEventListener('error', () => { img.closest('.shot').remove(); refit(); });
+    img.addEventListener('error', () => {
+      const shot = img.closest('.shot');
+      shot.classList.add('missing');
+      shot.innerHTML = `<div class="shot-empty">${svg('events', 28, '#8C7BFF')}<b>Screenshot coming soon</b><span>Upload <code>${esc(shot.dataset.full)}</code> to your repo and it will appear here.</span></div>`;
+    });
   });
   const lbImg = lb.querySelector('img'), lbCap = lb.querySelector('figcaption');
   grid.addEventListener('click', e => {
-    const shot = e.target.closest('.shot'); if (!shot) return;
+    const shot = e.target.closest('.shot'); if (!shot || shot.classList.contains('missing')) return;
     lbImg.src = shot.dataset.full; lbCap.textContent = shot.dataset.caption; lb.classList.add('open');
   });
   const close = () => lb.classList.remove('open');
