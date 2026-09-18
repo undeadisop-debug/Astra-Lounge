@@ -665,7 +665,7 @@ if (canHover) {
   const cv = document.getElementById('stars');
   if (!fx.starfield) { cv.remove(); return; }
   const ctx = cv.getContext('2d'), dpr = Math.min(window.devicePixelRatio || 1, 2);
-  let w = 0, h = 0, stars = [], shoot = null, nextShoot = 3000, running = true;
+  let w = 0, h = 0, stars = [], shoot = null, nextShoot = 30, running = true;
 
   function resize(force) {
     const nw = window.innerWidth, nh = window.innerHeight;
