@@ -4,40 +4,280 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Astra Lounge — Discord Community</title>
+<meta name="description" content="A chill place to hang out, talk, and game with people who get it. 150 members and growing.">
 
-<!-- ===== Embed / Link Preview tags (Discord, Twitter, Slack, etc.) ===== -->
+<!--
+============================================================================
+  DISCORD EMBED / LINK PREVIEW  (what shows when you paste your link)
+
+  Discord does NOT read the edit box further down — it only reads these
+  tags. So if you change your server name, description or member count,
+  change it HERE too.
+
+  - og:title        = bold title of the embed
+  - og:description  = text under the title
+  - og:image        = big picture in the embed (best size: 1200 x 630)
+  - theme-color     = the coloured bar on the left of the embed
+
+  Tips:
+  - Use a permanent image link (like your GitHub Pages one). Links that
+    start with cdn.discordapp.com EXPIRE and the picture will vanish.
+  - Discord remembers old embeds for a while. To force a refresh, paste
+    your link with ?v=2 on the end (then ?v=3 next time, and so on).
+============================================================================
+-->
+<meta property="og:site_name" content="Astra Lounge">
 <meta property="og:title" content="Astra Lounge — Discord Community">
 <meta property="og:description" content="A chill place to hang out, talk, and game with people who get it. 150 members and growing.">
-<meta property="og:image" content="https://undeadisop-debug.github.io/Astra-Lounge/EA546BAA-6426-4900-BA87-9FE1C10ACCF9.png
-">
+<meta property="og:image" content="https://undeadisop-debug.github.io/Astra-Lounge/EA546BAA-6426-4900-BA87-9FE1C10ACCF9.png">
 <meta property="og:url" content="https://undeadisop-debug.github.io/Astra-Lounge/">
 <meta property="og:type" content="website">
-<meta property="theme-color" content="#5865F2">
+<meta name="theme-color" content="#5865F2">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Astra Lounge — Discord Community">
 <meta name="twitter:description" content="A chill place to hang out, talk, and game with people who get it. 150 members and growing.">
-<meta name="twitter:image" content="https://cdn.discordapp.com/attachments/1548966043441963109/1550157918425448639/EA546BAA-6426-4900-BA87-9FE1C10ACCF9.png?ex=6aadf950&is=6aaca7d0&hm=8b5d3f104ba606d0914f244c501537e39d38c50abc291624c98b37dc41d868a6">
+<meta name="twitter:image" content="https://undeadisop-debug.github.io/Astra-Lounge/EA546BAA-6426-4900-BA87-9FE1C10ACCF9.png">
 <!-- ======================================================================= -->
 
+<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236C4CF1'/%3E%3Cpath d='M32 10l5.5 16.5L54 32l-16.5 5.5L32 54l-5.5-16.5L10 32l16.5-5.5z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+  :root {
+    --bg: #07080F;
+    --panel: rgba(14, 15, 28, 0.72);
+    --card: #141527;
+    --line: rgba(255, 255, 255, 0.08);
+    --text: #E7E6EF;
+    --muted: #A9A6BE;
+    --dim: #8B889F;
+    --accent: #6C4CF1;
+    --accent-2: #B084FF;
+    --blurple: #5865F2;
+    --green: #3BA55D;
+    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-display: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+  }
+
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #0B0C14; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+  body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
   a { color: #B9A6FF; text-decoration: none; }
-  a:hover { color: #D6C9FF; }
-  ::selection { background: #6C4CF1; color: #fff; }
+  ::selection { background: var(--accent); color: #fff; }
+  h1, h2, h3 { font-family: var(--font-display); }
+  :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 6px; }
+
+  #stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  #progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--accent), var(--accent-2)); z-index: 50; }
+  .page { position: relative; z-index: 1; }
+  .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- Nav ---------- */
+  .nav { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid transparent; transition: background .35s, border-color .35s, backdrop-filter .35s; }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; transition: padding .35s var(--ease); }
+  .nav.scrolled { background: rgba(7, 8, 15, 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom-color: var(--line); }
+  .nav.scrolled .nav-inner { padding: 12px 0; }
+  .brand { display: flex; align-items: center; gap: 12px; color: #fff; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; transition: transform .5s var(--ease); }
+  .brand:hover .brand-mark { transform: rotate(-8deg) scale(1.08); }
+  .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-name { font-family: var(--font-display); font-size: 18px; font-weight: 800; letter-spacing: -0.2px; }
+  .nav-links { display: flex; align-items: center; gap: 34px; }
+  .nav-links a { position: relative; font-size: 15px; font-weight: 600; color: #C7C4D9; padding: 6px 0; transition: color .25s; }
+  .nav-links a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transform: scaleX(0); transform-origin: 0 50%; transition: transform .35s var(--ease); }
+  .nav-links a:hover, .nav-links a.active { color: #fff; }
+  .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .burger { display: none; width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.05); cursor: pointer; padding: 0; position: relative; }
+  .burger span { position: absolute; left: 12px; right: 12px; height: 2px; border-radius: 2px; background: #fff; transition: transform .3s var(--ease), opacity .2s, top .3s var(--ease); }
+  .burger span:nth-child(1) { top: 14px; } .burger span:nth-child(2) { top: 20px; } .burger span:nth-child(3) { top: 26px; }
+  .burger[aria-expanded="true"] span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+  .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded="true"] span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+  .mobile-menu { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s var(--ease); background: rgba(7, 8, 15, 0.95); }
+  .mobile-menu > div { overflow: hidden; }
+  .mobile-menu.open { grid-template-rows: 1fr; border-bottom: 1px solid var(--line); }
+  .mobile-menu a.m-link { display: block; padding: 14px 0; font-size: 16px; font-weight: 700; color: #E7E6EF; border-top: 1px solid var(--line); }
+  .mobile-menu .btn { margin: 14px 0 20px; width: 100%; justify-content: center; }
+
+  /* ---------- Buttons ---------- */
+  .btn { position: relative; display: inline-flex; align-items: center; gap: 10px; border-radius: 12px; font-weight: 700; overflow: hidden; transition: transform .3s var(--ease), box-shadow .3s, background .3s, border-color .3s; will-change: transform; }
+  .btn:hover { transform: translateY(-3px); }
+  .btn:active { transform: translateY(0) scale(.98); }
+  .btn-primary { background: var(--blurple); color: #fff; box-shadow: 0 8px 24px rgba(88,101,242,.45); }
+  .btn-primary:hover { box-shadow: 0 14px 36px rgba(88,101,242,.6); color: #fff; }
+  .btn-primary::after { content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; transform: skewX(-20deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); transition: left .7s var(--ease); }
+  .btn-primary:hover::after { left: 130%; }
+  .btn-ghost { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: var(--text); }
+  .btn-ghost:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.28); color: #fff; }
+  .btn-ghost .arrow { display: inline-block; transition: transform .3s var(--ease); }
+  .btn-ghost:hover .arrow { transform: translateY(3px); }
+  .btn-sm { padding: 11px 20px; font-size: 15px; }
+  .btn-lg { padding: 16px 30px; font-size: 16px; }
+  .btn-xl { padding: 18px 38px; font-size: 17px; }
+  .btn-pulse { animation: pulse 2.6s ease-out infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 8px 24px rgba(88,101,242,.45), 0 0 0 0 rgba(88,101,242,.55); } 70%, 100% { box-shadow: 0 8px 24px rgba(88,101,242,.45), 0 0 0 18px rgba(88,101,242,0); } }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; text-align: center; padding: 110px 0 90px; overflow: hidden; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; opacity: .55; }
+  .orb-1 { width: 620px; height: 420px; top: -160px; left: 50%; margin-left: -310px; background: radial-gradient(circle, var(--accent), transparent 70%); animation: drift 14s ease-in-out infinite alternate; }
+  .orb-2 { width: 380px; height: 380px; top: 120px; left: -120px; background: radial-gradient(circle, var(--blurple), transparent 70%); opacity: .3; animation: drift 18s ease-in-out infinite alternate-reverse; }
+  .orb-3 { width: 340px; height: 340px; top: 220px; right: -120px; background: radial-gradient(circle, var(--accent-2), transparent 70%); opacity: .28; animation: drift 16s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: translate3d(-30px, -10px, 0) scale(1); } to { transform: translate3d(40px, 30px, 0) scale(1.12); } }
+
+  .rise { opacity: 0; animation: rise .9s var(--ease) forwards; animation-delay: var(--d, 0ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(26px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+  .badge { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 999px; background: rgba(88,101,242,.12); border: 1px solid rgba(88,101,242,.35); margin-bottom: 28px; font-size: 14px; font-weight: 700; color: #C6C2FF; }
+  .dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--green); animation: ping 1.8s ease-out infinite; }
+  @keyframes ping { to { transform: scale(3.2); opacity: 0; } }
+
+  .hero h1 { position: relative; margin: 0 auto 24px; font-size: clamp(40px, 7.4vw, 72px); font-weight: 800; line-height: 1.05; letter-spacing: -1.5px; max-width: 900px; color: #fff; }
+  .grad { background: linear-gradient(110deg, #8C7BFF, var(--blurple), var(--accent-2), #8C7BFF); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sheen 7s linear infinite; }
+  @keyframes sheen { to { background-position: -300% 0; } }
+  .hero p.lead { position: relative; margin: 0 auto 40px; font-size: clamp(17px, 2.2vw, 19px); line-height: 1.6; max-width: 620px; color: var(--muted); }
+  .hero-cta { position: relative; display: flex; gap: 16px; margin-bottom: 64px; flex-wrap: wrap; justify-content: center; }
+
+  .stats { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 760px; margin: 0 auto; padding-top: 36px; border-top: 1px solid var(--line); }
+  .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px; border-radius: 14px; transition: transform .35s var(--ease), background .35s; }
+  .stat:hover { transform: translateY(-4px); background: rgba(255,255,255,.04); }
+  .stat b { font-family: var(--font-display); font-size: 30px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 13px; color: var(--dim); font-weight: 600; }
+
+  /* ---------- Marquee ---------- */
+  .marquee { overflow: hidden; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.02); -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .marquee-track { display: flex; width: max-content; animation: scroll 32s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee-item { display: inline-flex; align-items: center; gap: 28px; padding-right: 28px; font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #C7C4D9; white-space: nowrap; }
+  .marquee-item::after { content: '✦'; color: var(--accent-2); font-size: 12px; }
+  @keyframes scroll { to { transform: translateX(-50%); } }
+
+  /* ---------- Sections ---------- */
+  .section { padding: 100px 0; }
+  .section.alt { background: var(--panel); }
+  .section-head { text-align: center; max-width: 640px; margin: 0 auto 60px; }
+  .eyebrow { font-size: 14px; font-weight: 700; color: #8C7BFF; letter-spacing: 1.5px; text-transform: uppercase; }
+  .section-head h2, .community h2 { margin: 14px 0 0; font-size: clamp(30px, 4.4vw, 40px); font-weight: 800; letter-spacing: -0.5px; color: #fff; line-height: 1.15; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: var(--d, 0ms); }
+  .reveal.from-left { transform: translateX(-40px); }
+  .reveal.from-right { transform: translateX(40px); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Feature cards ---------- */
+  .features-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .card { position: relative; padding: 32px; border-radius: 18px; background: var(--card); border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; gap: 16px; overflow: hidden; }
+  .card { transition: opacity .8s var(--ease) var(--d, 0ms), transform .8s var(--ease) var(--d, 0ms), translate .45s var(--ease), border-color .4s, box-shadow .4s; }
+  .card.in:hover { translate: 0 -8px; border-color: color-mix(in srgb, var(--accent-2) 45%, transparent); box-shadow: 0 24px 50px rgba(0,0,0,.4); }
+  .card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--accent) 28%, transparent), transparent 65%); opacity: 0; transition: opacity .4s; pointer-events: none; }
+  .card:hover::before { opacity: 1; }
+  .card > * { position: relative; }
+  .icon-box { width: 48px; height: 48px; border-radius: 12px; background: rgba(88,101,242,.15); display: flex; align-items: center; justify-content: center; transition: transform .5s var(--ease), background .4s; }
+  .card:hover .icon-box { transform: scale(1.12) rotate(-6deg); background: rgba(88,101,242,.28); }
+  .card h3 { margin: 0; font-size: 19px; font-weight: 700; color: #fff; }
+  .card p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--muted); }
+
+  /* ---------- Community ---------- */
+  .community { display: flex; align-items: center; gap: 80px; }
+  .community-text { flex: 1; display: flex; flex-direction: column; gap: 24px; }
+  .community-text p.intro { margin: 0; font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 480px; }
+  .benefits { display: flex; flex-direction: column; gap: 20px; margin-top: 8px; }
+  .benefit { display: flex; gap: 14px; align-items: flex-start; }
+  .check { width: 32px; height: 32px; border-radius: 8px; background: rgba(59,165,93,.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .check polyline { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset .6s var(--ease); transition-delay: calc(var(--d, 0ms) + 350ms); }
+  .benefit.in .check polyline { stroke-dashoffset: 0; }
+  .benefit-title { font-size: 16px; font-weight: 700; color: #fff; }
+  .benefit-desc { font-size: 14px; color: var(--dim); margin-top: 2px; line-height: 1.5; }
+
+  .preview-wrap { flex: 1; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
+  .preview-float { width: 100%; max-width: 460px; animation: float 7s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  .preview { position: relative; border-radius: 20px; background: var(--card); border: 1px solid var(--line); padding: 28px; box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 80px color-mix(in srgb, var(--accent) 18%, transparent); transition: transform .25s ease-out; transform-style: preserve-3d; }
+  .preview-head { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); overflow: hidden; flex-shrink: 0; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-name { font-size: 15px; font-weight: 700; color: #fff; }
+  .preview-count { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--green); font-weight: 600; margin-top: 2px; }
+  .channels { display: flex; flex-direction: column; gap: 8px; }
+  .channel { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; background: rgba(255,255,255,.04); font-size: 14px; color: #C7C4D9; transition: background .5s, color .5s, transform .5s var(--ease); }
+  .channel .hash { color: #6B6880; font-size: 16px; transition: color .5s; }
+  .channel.active { background: rgba(88,101,242,.22); color: #fff; transform: translateX(6px); }
+  .channel.active .hash { color: #B9A6FF; }
+  .eq { margin-left: auto; display: flex; align-items: flex-end; gap: 3px; height: 14px; }
+  .eq i { width: 3px; height: 100%; border-radius: 2px; background: var(--green); transform-origin: 50% 100%; animation: eq 1s ease-in-out infinite; }
+  .eq i:nth-child(2) { animation-delay: -.35s; } .eq i:nth-child(3) { animation-delay: -.7s; }
+  @keyframes eq { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+  .typing { display: flex; align-items: center; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--dim); }
+  .typing-dots { display: inline-flex; gap: 4px; }
+  .typing-dots i { width: 6px; height: 6px; border-radius: 50%; background: #8B889F; animation: bounce 1.2s ease-in-out infinite; }
+  .typing-dots i:nth-child(2) { animation-delay: .15s; } .typing-dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-5px); opacity: 1; } }
+
+  /* ---------- FAQ ---------- */
+  .faq-list { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { border-radius: 14px; background: var(--card); border: 1px solid rgba(255,255,255,.06); overflow: hidden; transition: opacity .8s var(--ease) var(--d, 0ms), transform .8s var(--ease) var(--d, 0ms), border-color .35s; }
+  .faq-item:hover, .faq-item.open { border-color: color-mix(in srgb, var(--accent-2) 40%, transparent); }
+  .faq-q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 26px; background: none; border: 0; color: #fff; font: 700 16px var(--font-body); text-align: left; cursor: pointer; }
+  .faq-icon { position: relative; width: 28px; height: 28px; border-radius: 8px; background: rgba(88,101,242,.15); flex-shrink: 0; transition: transform .45s var(--ease), background .3s; }
+  .faq-icon::before, .faq-icon::after { content: ''; position: absolute; top: 50%; left: 50%; width: 12px; height: 2px; margin: -1px 0 0 -6px; border-radius: 2px; background: #B9A6FF; }
+  .faq-icon::after { transform: rotate(90deg); transition: transform .45s var(--ease); }
+  .faq-item.open .faq-icon { transform: rotate(180deg); background: rgba(88,101,242,.3); }
+  .faq-item.open .faq-icon::after { transform: rotate(0deg); }
+  .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease); }
+  .faq-a > div { overflow: hidden; }
+  .faq-item.open .faq-a { grid-template-rows: 1fr; }
+  .faq-a p { margin: 0; padding: 0 26px 24px; font-size: 15px; line-height: 1.65; color: var(--muted); }
+
+  /* ---------- CTA + footer ---------- */
+  .cta { position: relative; padding: 96px 0; text-align: center; overflow: hidden; background: linear-gradient(135deg, #241C4E, #120D24); }
+  .cta .orb { top: -140px; right: -80px; width: 520px; height: 420px; background: radial-gradient(circle, var(--accent), transparent 70%); opacity: .5; animation: drift 12s ease-in-out infinite alternate; }
+  .cta .orb.b { top: auto; right: auto; bottom: -200px; left: -100px; background: radial-gradient(circle, var(--blurple), transparent 70%); opacity: .35; animation-direction: alternate-reverse; }
+  .cta h2 { position: relative; margin: 0 0 16px; font-size: clamp(32px, 5vw, 44px); font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .cta p { position: relative; margin: 0 0 36px; font-size: 17px; color: #C7C4D9; }
+  .footer { border-top: 1px solid var(--line); background: var(--bg); padding: 36px 0; }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-size: 14px; color: #6B6880; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--dim); font-weight: 600; transition: color .25s; }
+  .footer-links a:hover { color: #fff; }
+
+  /* ---------- Responsive ---------- */
   @media (max-width: 900px) {
-    .nav-links { display: none !important; }
-    .hero-title { font-size: 44px !important; }
-    .features-grid { grid-template-columns: 1fr !important; }
-    .community-row { flex-direction: column !important; }
-    .stats-row { flex-wrap: wrap; gap: 28px !important; }
-    section, .section-pad { padding-left: 24px !important; padding-right: 24px !important; }
+    .wrap { padding: 0 20px; }
+    .nav-links { display: none; }
+    .burger { display: block; }
+    .hero { padding: 72px 0 64px; }
+    .hero-cta { margin-bottom: 48px; }
+    .hero-cta .btn { width: 100%; justify-content: center; }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .section { padding: 72px 0; }
+    .section-head { margin-bottom: 40px; }
+    .features-grid { grid-template-columns: 1fr; gap: 16px; }
+    .card { padding: 26px; }
+    .community { flex-direction: column; gap: 48px; align-items: stretch; }
+    .reveal.from-left, .reveal.from-right { transform: translateY(30px); }
+    .cta { padding: 72px 0; }
+    .cta .btn { width: 100%; justify-content: center; padding-left: 20px; padding-right: 20px; }
+    .footer-inner { flex-direction: column; text-align: center; }
+  }
+  @media (min-width: 901px) { .mobile-menu { display: none; } }
+  @media (max-width: 480px) { .nav-right .btn { display: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .rise, .reveal { opacity: 1 !important; transform: none !important; filter: none !important; }
+    .check polyline { stroke-dashoffset: 0 !important; }
   }
 </style>
 </head>
-<body>
+<body id="top">
+<noscript><p style="padding:40px;text-align:center;color:#fff;font-family:sans-serif">Please enable JavaScript to view this page.</p></noscript>
 
 <!--
 ============================================================================
@@ -45,11 +285,15 @@
   touched — the page builds itself from these values.
 
   - Plain text fields: just replace the text between the quotes.
-  - Lists (features / benefits / faq): copy an existing { ... } block,
-    paste it above the closing ], and edit its text. Delete a block to
-    remove that card. Keep the commas between blocks.
+  - Lists (features / benefits / faq / marquee): copy an existing { ... }
+    block (or "text"), paste it above the closing ], and edit its text.
+    Delete a block to remove it. Keep the commas between blocks.
   - "icon" on a feature can be any one of: voice, events, shield, roles,
     bots, support  (these are ready-made icon drawings below).
+  - Numbers like memberCount count up on their own when the page loads.
+    "150", "150+" and "1,200" all work.
+  - REMEMBER: the Discord embed (link preview) is set separately, in the
+    box at the very top of this file. Update it there too.
 ============================================================================
 -->
 <script>
@@ -57,8 +301,12 @@ const CONFIG = {
   serverName: "Astra Lounge",
   inviteLink: "https://discord.gg/tEQhbRVXx8",
 
+  // Optional: link to your server icon. Leave as "" to use the built-in icon.
+  logoImage: "",
+
   memberCount: "150",
-  channelCount: "30",
+  channelCount: "30+",
+  moderation: "24/7",
   establishedYear: "2022",
 
   heroBadge: "150 members and growing",
@@ -69,6 +317,9 @@ const CONFIG = {
     { label: "Community", href: "#community" },
     { label: "FAQ", href: "#faq" }
   ],
+
+  // The scrolling strip under the hero. Set to [] to hide it.
+  marquee: ["Game nights", "Movie nights", "Giveaways", "Tournaments", "Music bots", "Study halls", "Late-night VC", "Trivia"],
 
   features: [
     { icon: "voice", title: "Active Voice Channels", description: "Hangout lounges, game rooms, and study halls that are almost always live." },
@@ -98,12 +349,20 @@ const CONFIG = {
     { question: "How do I get support?", answer: "Ping a mod in #support or open a ticket — we respond quickly." }
   ],
 
-  footerNote: "Not affiliated with Discord Inc."
+  footerNote: "Not affiliated with Discord Inc.",
+
+  // Colours. Any hex colour works — try "#F14C8A" and "#FFB084" for a sunset look.
+  theme: { accent: "#6C4CF1", accent2: "#B084FF" },
+
+  // Turn effects on (true) or off (false).
+  effects: { starfield: true, shootingStars: true, cardTilt: true }
 };
 </script>
 <!-- ==================== DO NOT EDIT BELOW THIS LINE ==================== -->
 
-<div id="app"></div>
+<div id="progress"></div>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div id="app" class="page"></div>
 
 <script>
 const ICONS = {
@@ -117,167 +376,347 @@ const ICONS = {
   check: '<polyline points="20 6 9 17 4 12"/>'
 };
 
-function svg(iconKey, size, stroke, fillDots) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[iconKey] || ''}${fillDots ? '<circle cx="9" cy="12" r="1" fill="'+stroke+'"/><circle cx="15" cy="12" r="1" fill="'+stroke+'"/>' : ''}</svg>`;
-}
-
-function joinBtn(label, extraStyle) {
-  return `<a href="${CONFIG.inviteLink}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 10px; border-radius: 12px; background: #5865F2; color: #fff; font-weight: 700; box-shadow: 0 8px 24px rgba(88,101,242,0.45); ${extraStyle}">${svg('discord', 20, '#fff')}${label}</a>`;
-}
-
 const c = CONFIG;
+const fx = Object.assign({ starfield: true, shootingStars: true, cardTilt: true }, c.effects || {});
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canHover = window.matchMedia('(hover: hover)').matches;
+
+// Makes any text typed in the edit box safe to show (so & < > " never break the page)
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+function svg(iconKey, size, stroke, fillDots) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[iconKey] || ''}${fillDots ? `<circle cx="9" cy="12" r="1" fill="${stroke}"/><circle cx="15" cy="12" r="1" fill="${stroke}"/>` : ''}</svg>`;
+}
+
+function joinBtn(label, cls) {
+  return `<a class="btn btn-primary ${cls || ''}" href="${esc(c.inviteLink)}" target="_blank" rel="noopener">${svg('discord', 20, '#fff', true)}<span>${esc(label)}</span></a>`;
+}
+
+function logo() {
+  return c.logoImage ? `<img src="${esc(c.logoImage)}" alt="">` : '';
+}
+
+// Theme colours from the edit box
+if (c.theme) {
+  if (c.theme.accent) document.documentElement.style.setProperty('--accent', c.theme.accent);
+  if (c.theme.accent2) document.documentElement.style.setProperty('--accent-2', c.theme.accent2);
+}
+document.title = c.serverName + ' — Discord Community';
+if (c.logoImage) document.getElementById('favicon').href = c.logoImage;
+
+const stats = [
+  { value: c.memberCount, label: 'Members', count: true },
+  { value: c.channelCount, label: 'Channels', count: true },
+  { value: c.moderation || '24/7', label: 'Active Moderation' },
+  { value: c.establishedYear, label: 'Established' }
+];
+const marquee = (c.marquee || []).filter(Boolean);
+const marqueeHalf = marquee.map(m => `<span class="marquee-item">${esc(m)}</span>`).join('');
 
 document.getElementById('app').innerHTML = `
-<div style="width: 100%; box-sizing: border-box; background: #0B0C14; color: #E7E6EF; display: flex; flex-direction: column;">
-
-  <div class="section-pad" style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 20px 64px; background: rgba(11,12,20,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08);">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6C4CF1, #B084FF); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-        ${svg('discord', 22, '#fff', true)}
-      </div>
-      <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.2px; color: #fff;">${c.serverName}</span>
-    </div>
-    <div class="nav-links" style="display: flex; align-items: center; gap: 36px;">
-      ${c.navLinks.map(l => `<a href="${l.href}" style="font-size: 15px; font-weight: 600; color: #C7C4D9;">${l.label}</a>`).join('')}
-    </div>
-    ${joinBtn('Join Server', 'padding: 11px 22px; font-size: 15px;')}
-  </div>
-
-  <div class="section-pad" style="position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 120px 64px 100px; overflow: hidden;">
-    <div style="position: absolute; top: -180px; left: 50%; transform: translateX(-50%); width: 900px; height: 500px; background: radial-gradient(circle, rgba(108,76,241,0.35), transparent 70%); filter: blur(40px); pointer-events: none;"></div>
-
-    <div style="position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 999px; background: rgba(88,101,242,0.12); border: 1px solid rgba(88,101,242,0.35); margin-bottom: 28px;">
-      <span style="width: 8px; height: 8px; border-radius: 999px; background: #3BA55D; box-shadow: 0 0 8px #3BA55D;"></span>
-      <span style="font-size: 14px; font-weight: 700; color: #C6C2FF;">${c.heroBadge}</span>
-    </div>
-
-    <h1 class="hero-title" style="position: relative; margin: 0 0 24px; font-size: 68px; font-weight: 800; line-height: 1.05; letter-spacing: -1.5px; max-width: 900px; color: #fff;">
-      Welcome to <span style="background: linear-gradient(135deg, #8C7BFF, #5865F2); -webkit-background-clip: text; background-clip: text; color: transparent;">${c.serverName}</span>
-    </h1>
-
-    <p style="position: relative; margin: 0 0 40px; font-size: 19px; line-height: 1.6; max-width: 620px; color: #A9A6BE;">${c.heroDescription}</p>
-
-    <div style="position: relative; display: flex; gap: 16px; margin-bottom: 64px; flex-wrap: wrap; justify-content: center;">
-      ${joinBtn('Join Our Discord', 'padding: 16px 32px; font-size: 16px;')}
-      <a href="#features" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 28px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); color: #E7E6EF; font-weight: 700; font-size: 16px;">See what's inside</a>
-    </div>
-
-    <div class="stats-row" style="position: relative; display: flex; gap: 56px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.08); width: 100%; max-width: 720px; justify-content: center;">
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-        <span style="font-size: 30px; font-weight: 800; color: #fff;">${c.memberCount}</span>
-        <span style="font-size: 13px; color: #8B889F; font-weight: 600;">Members</span>
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-        <span style="font-size: 30px; font-weight: 800; color: #fff;">${c.channelCount}+</span>
-        <span style="font-size: 13px; color: #8B889F; font-weight: 600;">Channels</span>
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-        <span style="font-size: 30px; font-weight: 800; color: #fff;">24/7</span>
-        <span style="font-size: 13px; color: #8B889F; font-weight: 600;">Active Moderation</span>
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-        <span style="font-size: 30px; font-weight: 800; color: #fff;">${c.establishedYear}</span>
-        <span style="font-size: 13px; color: #8B889F; font-weight: 600;">Established</span>
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark">${c.logoImage ? logo() : svg('discord', 22, '#fff', true)}</span>
+        <span class="brand-name">${esc(c.serverName)}</span>
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        ${c.navLinks.map(l => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join('')}
+      </nav>
+      <div class="nav-right">
+        ${joinBtn('Join Server', 'btn-sm')}
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
       </div>
     </div>
-  </div>
+    <div class="mobile-menu" id="mobileMenu"><div><div class="wrap">
+      ${c.navLinks.map(l => `<a class="m-link" href="${esc(l.href)}">${esc(l.label)}</a>`).join('')}
+      ${joinBtn('Join Server', 'btn-lg')}
+    </div></div></div>
+  </header>
 
-  <div id="features" class="section-pad" style="padding: 100px 64px; background: #0F1018;">
-    <div style="text-align: center; max-width: 640px; margin: 0 auto 64px;">
-      <span style="font-size: 14px; font-weight: 700; color: #8C7BFF; letter-spacing: 1.5px; text-transform: uppercase;">What you'll find</span>
-      <h2 style="margin: 14px 0 0; font-size: 40px; font-weight: 800; letter-spacing: -0.5px; color: #fff;">Everything a great community needs</h2>
+  <section class="hero">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+    <div class="wrap">
+      <div class="badge rise" style="--d:100ms"><span class="dot"></span>${esc(c.heroBadge)}</div>
+      <h1 class="rise" style="--d:220ms">Welcome to <span class="grad">${esc(c.serverName)}</span></h1>
+      <p class="lead rise" style="--d:360ms">${esc(c.heroDescription)}</p>
+      <div class="hero-cta rise" style="--d:500ms">
+        ${joinBtn('Join Our Discord', 'btn-lg btn-pulse')}
+        <a class="btn btn-ghost btn-lg" href="#features">See what's inside <span class="arrow">↓</span></a>
+      </div>
+      <div class="stats rise" style="--d:660ms">
+        ${stats.map(s => `<div class="stat"><b ${s.count ? 'data-count' : ''}>${esc(s.value)}</b><span>${s.label}</span></div>`).join('')}
+      </div>
     </div>
-    <div class="features-grid" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
-      ${c.features.map(f => `
-        <div style="padding: 32px; border-radius: 18px; background: #171826; border: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 16px;">
-          <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(88,101,242,0.15); display: flex; align-items: center; justify-content: center;">
-            ${svg(f.icon, 24, '#8C7BFF')}
-          </div>
-          <h3 style="margin: 0; font-size: 19px; font-weight: 700; color: #fff;">${f.title}</h3>
-          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #A9A6BE;">${f.description}</p>
-        </div>
-      `).join('')}
-    </div>
-  </div>
+  </section>
 
-  <div id="community" class="community-row section-pad" style="padding: 100px 64px; background: #0B0C14; display: flex; align-items: center; gap: 80px;">
-    <div style="flex: 1; display: flex; flex-direction: column; gap: 28px;">
-      <span style="font-size: 14px; font-weight: 700; color: #8C7BFF; letter-spacing: 1.5px; text-transform: uppercase;">Who it's for</span>
-      <h2 style="margin: 0; font-size: 38px; font-weight: 800; letter-spacing: -0.5px; color: #fff; line-height: 1.2;">Built for ${c.niche}</h2>
-      <p style="margin: 0; font-size: 16px; line-height: 1.7; color: #A9A6BE; max-width: 480px;">${c.audienceIntro}</p>
-      <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 12px;">
-        ${c.benefits.map(b => `
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(59,165,93,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              ${svg('check', 16, '#3BA55D')}
-            </div>
-            <div>
-              <div style="font-size: 16px; font-weight: 700; color: #fff;">${b.title}</div>
-              <div style="font-size: 14px; color: #8B889F;">${b.description}</div>
-            </div>
+  ${marquee.length ? `<div class="marquee" aria-hidden="true"><div class="marquee-track">${marqueeHalf.repeat(4)}</div></div>` : ''}
+
+  <section id="features" class="section alt">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">What you'll find</span>
+        <h2>Everything a great community needs</h2>
+      </div>
+      <div class="features-grid">
+        ${c.features.map((f, i) => `
+          <div class="card reveal" style="--d:${(i % 3) * 110}ms">
+            <div class="icon-box">${svg(f.icon, 24, '#8C7BFF')}</div>
+            <h3>${esc(f.title)}</h3>
+            <p>${esc(f.description)}</p>
           </div>
         `).join('')}
       </div>
     </div>
+  </section>
 
-    <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
-      <div style="width: 100%; max-width: 460px; border-radius: 20px; background: #171826; border: 1px solid rgba(255,255,255,0.08); padding: 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.35);">
-        <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;">
-          <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #6C4CF1, #B084FF);"></div>
-          <div>
-            <div style="font-size: 15px; font-weight: 700; color: #fff;">${c.serverName}</div>
-            <div style="font-size: 13px; color: #3BA55D; font-weight: 600;">● ${c.memberCount} Members</div>
-          </div>
+  <section id="community" class="section">
+    <div class="wrap community">
+      <div class="community-text">
+        <div class="reveal from-left">
+          <span class="eyebrow">Who it's for</span>
+          <h2>Built for ${esc(c.niche)}</h2>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          ${c.previewChannels.map(ch => `
-            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.04);">
-              <span style="color: #6B6880; font-size: 16px;">#</span>
-              <span style="font-size: 14px; color: #C7C4D9;">${ch}</span>
+        <p class="intro reveal from-left" style="--d:100ms">${esc(c.audienceIntro)}</p>
+        <div class="benefits">
+          ${c.benefits.map((b, i) => `
+            <div class="benefit reveal from-left" style="--d:${180 + i * 120}ms">
+              <div class="check">${svg('check', 16, '#3BA55D')}</div>
+              <div>
+                <div class="benefit-title">${esc(b.title)}</div>
+                <div class="benefit-desc">${esc(b.description)}</div>
+              </div>
             </div>
           `).join('')}
-          <div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.04);">
-            ${svg('voice', 14, '#6B6880')}
-            <span style="font-size: 14px; color: #C7C4D9;">${c.previewVoiceChannel}</span>
+        </div>
+      </div>
+
+      <div class="preview-wrap reveal from-right" id="previewWrap">
+        <div class="preview-float">
+          <div class="preview" id="preview">
+            <div class="preview-head">
+              <div class="avatar">${logo()}</div>
+              <div>
+                <div class="preview-name">${esc(c.serverName)}</div>
+                <div class="preview-count"><span class="dot"></span>${esc(c.memberCount)} Members</div>
+              </div>
+            </div>
+            <div class="channels">
+              ${c.previewChannels.map(ch => `<div class="channel text"><span class="hash">#</span><span>${esc(ch)}</span></div>`).join('')}
+              <div class="channel">${svg('voice', 14, '#6B6880')}<span>${esc(c.previewVoiceChannel)}</span><span class="eq"><i></i><i></i><i></i></span></div>
+            </div>
+            <div class="typing"><span class="typing-dots"><i></i><i></i><i></i></span><span>Several people are typing…</span></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div id="faq" class="section-pad" style="padding: 100px 64px; background: #0F1018;">
-    <div style="text-align: center; max-width: 640px; margin: 0 auto 56px;">
-      <span style="font-size: 14px; font-weight: 700; color: #8C7BFF; letter-spacing: 1.5px; text-transform: uppercase;">Good to know</span>
-      <h2 style="margin: 14px 0 0; font-size: 40px; font-weight: 800; letter-spacing: -0.5px; color: #fff;">Frequently asked questions</h2>
+  <section id="faq" class="section alt">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Good to know</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-list">
+        ${c.faqs.map((f, i) => `
+          <div class="faq-item reveal${i === 0 ? ' open' : ''}" style="--d:${i * 80}ms">
+            <button class="faq-q" aria-expanded="${i === 0}" aria-controls="faq-a-${i}">
+              <span>${esc(f.question)}</span><span class="faq-icon"></span>
+            </button>
+            <div class="faq-a" id="faq-a-${i}"><div><p>${esc(f.answer)}</p></div></div>
+          </div>
+        `).join('')}
+      </div>
     </div>
-    <div style="max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
-      ${c.faqs.map(f => `
-        <div style="padding: 24px 28px; border-radius: 14px; background: #171826; border: 1px solid rgba(255,255,255,0.06);">
-          <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px;">${f.question}</div>
-          <div style="font-size: 15px; line-height: 1.6; color: #A9A6BE;">${f.answer}</div>
-        </div>
-      `).join('')}
+  </section>
+
+  <section class="cta">
+    <div class="orb"></div><div class="orb b"></div>
+    <div class="wrap">
+      <h2 class="reveal">Ready to jump in?</h2>
+      <p class="reveal" style="--d:100ms">Join ${esc(String(c.memberCount).replace(/\+$/, ''))}+ members already hanging out in ${esc(c.serverName)}.</p>
+      <div class="reveal" style="--d:200ms">${joinBtn('Join ' + c.serverName + ' on Discord', 'btn-xl btn-pulse')}</div>
     </div>
-  </div>
+  </section>
 
-  <div class="section-pad" style="padding: 90px 64px; background: linear-gradient(135deg, #241C4E, #171029); text-align: center; position: relative; overflow: hidden;">
-    <div style="position: absolute; top: -120px; right: -80px; width: 500px; height: 400px; background: radial-gradient(circle, rgba(108,76,241,0.4), transparent 70%); filter: blur(30px);"></div>
-    <h2 style="position: relative; margin: 0 0 16px; font-size: 42px; font-weight: 800; color: #fff; letter-spacing: -0.5px;">Ready to jump in?</h2>
-    <p style="position: relative; margin: 0 0 36px; font-size: 17px; color: #C7C4D9;">Join ${c.memberCount}+ members already hanging out in ${c.serverName}.</p>
-    ${joinBtn('Join ' + c.serverName + ' on Discord', 'position: relative; padding: 18px 40px; font-size: 17px; box-shadow: 0 10px 30px rgba(88,101,242,0.5);')}
-  </div>
-
-  <div class="section-pad" style="padding: 40px 64px; background: #0B0C14; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-    <span style="font-size: 14px; color: #6B6880;">© ${c.establishedYear}–now ${c.serverName}. ${c.footerNote}</span>
-    <div style="display: flex; gap: 24px;">
-      <a href="#faq" style="font-size: 14px; color: #8B889F; font-weight: 600;">Rules</a>
-      <a href="#faq" style="font-size: 14px; color: #8B889F; font-weight: 600;">Support</a>
-      <a href="${c.inviteLink}" target="_blank" rel="noopener" style="font-size: 14px; color: #8B889F; font-weight: 600;">Join Server</a>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span>© ${esc(c.establishedYear)}–${new Date().getFullYear()} ${esc(c.serverName)}. ${esc(c.footerNote)}</span>
+      <div class="footer-links">
+        <a href="#faq">Rules</a>
+        <a href="#faq">Support</a>
+        <a href="${esc(c.inviteLink)}" target="_blank" rel="noopener">Join Server</a>
+      </div>
     </div>
-  </div>
-
-</div>
+  </footer>
 `;
+
+/* ============================ Animations ============================ */
+
+// Fade / slide sections in as you scroll to them
+(function reveal() {
+  const els = document.querySelectorAll('.reveal');
+  if (reduced || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  els.forEach(e => io.observe(e));
+})();
+
+// Count the stats up from zero
+(function countUp() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const m = el.textContent.trim().match(/^(\d[\d,]*)(.*)$/);
+    if (!m || reduced) return;
+    const target = parseInt(m[1].replace(/,/g, ''), 10), suffix = m[2], commas = m[1].includes(',');
+    const fmt = n => (commas ? n.toLocaleString('en-US') : String(n)) + suffix;
+    el.textContent = fmt(0);
+    const start = performance.now() + 900, dur = 1600;
+    (function tick(now) {
+      const t = Math.min(1, Math.max(0, (now - start) / dur));
+      el.textContent = fmt(Math.round(target * (1 - Math.pow(1 - t, 4))));
+      if (t < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  });
+})();
+
+// Nav: shrink on scroll, progress bar, highlight current section, mobile menu
+(function nav() {
+  const navEl = document.getElementById('nav'), bar = document.getElementById('progress');
+  const burger = document.getElementById('burger'), menu = document.getElementById('mobileMenu');
+  let ticking = false;
+  function onScroll() {
+    const y = window.scrollY, max = document.documentElement.scrollHeight - window.innerHeight;
+    navEl.classList.toggle('scrolled', y > 12);
+    bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  onScroll();
+
+  function setMenu(open) {
+    menu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  burger.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+  const links = [...document.querySelectorAll('.nav-links a')].filter(a => a.getAttribute('href').startsWith('#'));
+  if ('IntersectionObserver' in window && links.length) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    links.forEach(a => { const s = document.getElementById(a.getAttribute('href').slice(1)); if (s) io.observe(s); });
+  }
+})();
+
+// FAQ accordion
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => {
+    const open = !item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o => { o.classList.remove('open'); o.querySelector('.faq-q').setAttribute('aria-expanded', 'false'); });
+    item.classList.toggle('open', open);
+    item.querySelector('.faq-q').setAttribute('aria-expanded', String(open));
+  });
+});
+
+// Glow that follows the mouse on feature cards
+if (canHover) {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+}
+
+// Server preview: 3D tilt + cycling "active" channel
+(function preview() {
+  const wrap = document.getElementById('previewWrap'), card = document.getElementById('preview');
+  if (fx.cardTilt && canHover && !reduced) {
+    wrap.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+    });
+    wrap.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  }
+  const chans = card.querySelectorAll('.channel.text');
+  if (!chans.length) return;
+  let i = Math.min(1, chans.length - 1);
+  chans[i].classList.add('active');
+  if (reduced || chans.length < 2) return;
+  setInterval(() => {
+    chans[i].classList.remove('active');
+    i = (i + 1) % chans.length;
+    chans[i].classList.add('active');
+  }, 2600);
+})();
+
+// Twinkling starfield with the odd shooting star
+(function starfield() {
+  const cv = document.getElementById('stars');
+  if (!fx.starfield) { cv.remove(); return; }
+  const ctx = cv.getContext('2d'), dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let w = 0, h = 0, stars = [], shoot = null, nextShoot = 3000, running = true;
+
+  function resize(force) {
+    const nw = window.innerWidth, nh = window.innerHeight;
+    if (!force && nw === w && Math.abs(nh - h) < 160) return; // ignore mobile address-bar wobble
+    w = nw; h = nh + 160;
+    cv.width = w * dpr; cv.height = h * dpr;
+    cv.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.min(180, Math.floor(w * h / 8500));
+    stars = Array.from({ length: n }, () => ({
+      x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.3 + 0.3,
+      p: Math.random() * 6.28, s: Math.random() * 0.9 + 0.3, tint: Math.random() < 0.28
+    }));
+    if (reduced) draw(0);
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+    const sy = window.scrollY;
+    for (const s of stars) {
+      let y = (s.y - sy * s.r * 0.06) % h; if (y < 0) y += h;
+      ctx.globalAlpha = reduced ? 0.6 : 0.25 + 0.75 * Math.abs(Math.sin(s.p + t * 0.001 * s.s));
+      ctx.fillStyle = s.tint ? '#B9A6FF' : '#FFFFFF';
+      ctx.beginPath(); ctx.arc(s.x, y, s.r, 0, 6.2832); ctx.fill();
+    }
+    if (fx.shootingStars && !reduced) {
+      if (!shoot && t > nextShoot) {
+        shoot = { x: Math.random() * w * 0.8 + w * 0.1, y: Math.random() * h * 0.35, life: 0 };
+      }
+      if (shoot) {
+        shoot.life += 0.022; shoot.x += 9; shoot.y += 4.5;
+        const a = Math.sin(Math.min(1, shoot.life) * Math.PI);
+        const g = ctx.createLinearGradient(shoot.x, shoot.y, shoot.x - 130, shoot.y - 65);
+        g.addColorStop(0, 'rgba(255,255,255,' + a + ')'); g.addColorStop(1, 'rgba(185,166,255,0)');
+        ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(shoot.x - 130, shoot.y - 65); ctx.stroke();
+        if (shoot.life >= 1) { shoot = null; nextShoot = t + 4000 + Math.random() * 6000; }
+      }
+    }
+    ctx.globalAlpha = 1;
+    if (!reduced && running) requestAnimationFrame(draw);
+  }
+
+  resize(true);
+  window.addEventListener('resize', () => resize(false));
+  document.addEventListener('visibilitychange', () => {
+    const was = running; running = !document.hidden;
+    if (running && !was && !reduced) requestAnimationFrame(draw);
+  });
+  if (!reduced) requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>
